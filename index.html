@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineCalc — calculadoras de cine</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0f19">
+<style>
+:root{--bg:#0b0f19;--panel:#141c2b;--borde:#22304a;--texto:#e6ebf5;--tenue:#8fa0bb;--acento:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--texto);font:15px/1.5 system-ui,-apple-system,sans-serif;padding:16px}
+h1{font-size:20px;margin:0 0 2px}
+p.sub{color:var(--tenue);margin:0 0 14px;font-size:13px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{background:var(--panel);border:1px solid var(--borde);color:var(--tenue);padding:8px 12px;border-radius:9px;cursor:pointer;font:inherit}
+.tab.activa{color:var(--texto);border-color:var(--acento)}
+.panel{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:16px;max-width:760px}
+.oculto{display:none}
+label{display:flex;flex-direction:column;gap:5px;color:var(--tenue);font-size:12.5px;margin-bottom:10px}
+input,select{background:#0a1019;border:1px solid var(--borde);color:var(--texto);padding:9px 11px;border-radius:9px;font:inherit}
+.fila{display:flex;gap:10px;flex-wrap:wrap}
+.fila label{flex:1;min-width:140px}
+.resultado{margin-top:12px;padding:12px;border-radius:10px;background:#0a1424;border:1px solid #1c2f4d;font:14px ui-monospace,monospace;white-space:pre-wrap}
+button.calcular{background:linear-gradient(180deg,#2563eb,#1d4ed8);border:0;color:#fff;padding:10px 16px;border-radius:10px;font:600 14px inherit;cursor:pointer;margin-top:4px}
+footer{color:var(--tenue);font-size:12px;margin-top:16px}
+</style>
+</head>
+<body>
+<h1>CineCalc</h1>
+<p class="sub">Calculadoras de cinematografía · sin anuncios · funciona sin conexión (PWA)</p>
+<div class="tabs">
+  <button class="tab activa" data-p="fov">Campo de visión</button>
+  <button class="tab" data-p="dof">Profundidad de campo</button>
+  <button class="tab" data-p="exp">Exposición y ND</button>
+  <button class="tab" data-p="tc">Timecode y bitrate</button>
+  <button class="tab" data-p="eq">Equivalencia de objetivo</button>
+</div>
+
+<section class="panel" id="p-fov">
+  <div class="fila">
+    <label>Focal (mm)<input id="fov-f" type="number" value="35"></label>
+    <label>Formato<select id="fov-s">
+      <option value="36">Full Frame (36×24)</option><option value="24.89">Super 35 (24.89×18.66)</option>
+      <option value="23.5">APS-C (23.5×15.6)</option><option value="17.3">Micro 4/3 (17.3×13)</option>
+      <option value="12.5">1" (12.5×7.3)</option><option value="6.17">1/2.3" (6.17×4.55)</option>
+    </select></label>
+    <label>Distancia (m)<input id="fov-d" type="number" value="5"></label>
+  </div>
+  <button class="calcular" data-cal="fov">Calcular</button>
+  <div class="resultado" id="r-fov"></div>
+</section>
+
+<section class="panel oculto" id="p-dof">
+  <div class="fila">
+    <label>Focal (mm)<input id="dof-f" type="number" value="50"></label>
+    <label>Diafragma (T/f)<input id="dof-n" type="number" step="0.1" value="2.8"></label>
+    <label>Distancia (m)<input id="dof-d" type="number" value="3"></label>
+    <label>Círculo de confusión (mm)<input id="dof-c" type="number" step="0.001" value="0.029"></label>
+  </div>
+  <button class="calcular" data-cal="dof">Calcular</button>
+  <div class="resultado" id="r-dof"></div>
+</section>
+
+<section class="panel oculto" id="p-exp">
+  <div class="fila">
+    <label>FPS<input id="exp-fps" type="number" value="25"></label>
+    <label>Ángulo de obturación (°)<input id="exp-ang" type="number" value="180"></label>
+    <label>ISO base<input id="exp-iso" type="number" value="800"></label>
+    <label>ND (stops)<input id="exp-nd" type="number" step="0.1" value="0"></label>
+  </div>
+  <button class="calcular" data-cal="exp">Calcular</button>
+  <div class="resultado" id="r-exp"></div>
+</section>
+
+<section class="panel oculto" id="p-tc">
+  <div class="fila">
+    <label>FPS<select id="tc-fps"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>50</option><option>59.94</option></select></label>
+    <label>Timecode inicial<input id="tc-ini" value="01:00:00:00"></label>
+    <label>Duración (segundos)<input id="tc-dur" type="number" value="90"></label>
+    <label>Bitrate (Mbps)<input id="tc-br" type="number" step="0.1" value="100"></label>
+  </div>
+  <button class="calcular" data-cal="tc">Calcular</button>
+  <div class="resultado" id="r-tc"></div>
+</section>
+
+<section class="panel oculto" id="p-eq">
+  <div class="fila">
+    <label>Focal en formato A (mm)<input id="eq-f" type="number" value="50"></label>
+    <label>Diagonal A (mm)<input id="eq-a" type="number" step="0.01" value="43.27"></label>
+    <label>Diagonal B (mm)<input id="eq-b" type="number" step="0.01" value="28.12"></label>
+  </div>
+  <button class="calcular" data-cal="eq">Calcular</button>
+  <div class="resultado" id="r-eq"></div>
+</section>
+
+<footer>Código propio (MIT) · sin telemetría · sin cuentas</footer>
+<script src="app.js"></script>
+</body>
+</html>
