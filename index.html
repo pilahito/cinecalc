@@ -7,94 +7,238 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b0f19">
 <style>
-:root{--bg:#0b0f19;--panel:#141c2b;--borde:#22304a;--texto:#e6ebf5;--tenue:#8fa0bb;--acento:#38bdf8}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--texto);font:15px/1.5 system-ui,-apple-system,sans-serif;padding:16px}
-h1{font-size:20px;margin:0 0 2px}
-p.sub{color:var(--tenue);margin:0 0 14px;font-size:13px}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tab{background:var(--panel);border:1px solid var(--borde);color:var(--tenue);padding:8px 12px;border-radius:9px;cursor:pointer;font:inherit}
-.tab.activa{color:var(--texto);border-color:var(--acento)}
-.panel{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:16px;max-width:760px}
-.oculto{display:none}
-label{display:flex;flex-direction:column;gap:5px;color:var(--tenue);font-size:12.5px;margin-bottom:10px}
-input,select{background:#0a1019;border:1px solid var(--borde);color:var(--texto);padding:9px 11px;border-radius:9px;font:inherit}
-.fila{display:flex;gap:10px;flex-wrap:wrap}
-.fila label{flex:1;min-width:140px}
-.resultado{margin-top:12px;padding:12px;border-radius:10px;background:#0a1424;border:1px solid #1c2f4d;font:14px ui-monospace,monospace;white-space:pre-wrap}
-button.calcular{background:linear-gradient(180deg,#2563eb,#1d4ed8);border:0;color:#fff;padding:10px 16px;border-radius:10px;font:600 14px inherit;cursor:pointer;margin-top:4px}
-footer{color:var(--tenue);font-size:12px;margin-top:16px}
+:root{
+  --azul:#007aff; --verde:#34c759; --rojo:#ff3b30;
+  --fondo:#f2f2f7; --tarjeta:#ffffff; --texto:#1c1c1e; --sec:#8e8e93;
+  --borde:rgba(60,60,67,.16); --barra:rgba(249,249,249,.92);
+  --radio:14px; --claro:#f2f2f7;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --fondo:#000; --tarjeta:#1c1c1e; --texto:#f2f2f7; --sec:#98989f;
+         --borde:rgba(255,255,255,.14); --barra:rgba(28,28,30,.92); --claro:#2c2c2e; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  background:var(--fondo);color:var(--texto);
+  font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
+  padding:0 0 calc(74px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+  max-width:520px;margin:0 auto;
+}
+header{padding:calc(18px + env(safe-area-inset-top)) 18px 6px}
+h1{font:700 34px/1.1 -apple-system,"SF Pro Display",system-ui;letter-spacing:-.6px;margin:0}
+.sub{color:var(--sec);font-size:13px;margin:4px 0 0}
+main{padding:8px 14px 0}
+.panel{display:flex;flex-direction:column;gap:14px}
+.oculto{display:none !important}
+.tarjeta{background:var(--tarjeta);border-radius:var(--radio);overflow:hidden}
+.titulo-sec{font-size:13px;color:var(--sec);text-transform:uppercase;letter-spacing:.4px;padding:0 6px 6px}
+label.campo{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--borde);font-size:16px}
+label.campo:last-child{border-bottom:0}
+label.campo > span{flex:0 0 auto;min-width:132px;color:var(--texto)}
+input,select{
+  flex:1;min-width:0;width:100%;text-align:right;background:transparent;border:0;
+  color:var(--sec);font:inherit;font-size:16px;padding:0;appearance:none;-webkit-appearance:none;
+}
+input:focus,select:focus{outline:none;color:var(--azul)}
+select{cursor:pointer}
+.fila{display:flex;flex-direction:column;gap:14px}
+button.calcular{
+  width:100%;padding:15px;border:0;border-radius:var(--radio);
+  background:var(--azul);color:#fff;font:600 17px/1 -apple-system,system-ui;
+  cursor:pointer;margin-top:2px;
+}
+button.calcular:active{opacity:.7}
+.resultado{
+  background:var(--tarjeta);border-radius:var(--radio);padding:14px 16px;
+  font:15px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;
+  color:var(--texto);
+}
+canvas{border-radius:var(--radio);border:1px solid var(--borde);background:#070c15;width:100%}
+footer{color:var(--sec);font-size:12px;text-align:center;padding:22px 18px 6px}
+
+/* barra de pestañas inferior */
+nav.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;
+  background:var(--barra);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--borde);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+nav.tabbar .tab{
+  flex:1;background:none;border:0;color:var(--sec);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font:500 10px/1.1 -apple-system,system-ui;padding:9px 2px 7px;
+}
+nav.tabbar .tab .ico{font-size:20px;line-height:22px;filter:grayscale(1);opacity:.75}
+nav.tabbar .tab.activa{color:var(--azul)}
+nav.tabbar .tab.activa .ico{filter:none;opacity:1}
+
+/* filas de la pestaña Más */
+.fila-mas{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--borde);cursor:pointer;font-size:16px}
+.fila-mas:last-child{border-bottom:0}
+.fila-mas .ico{width:29px;height:29px;border-radius:8px;display:grid;place-items:center;background:var(--azul);color:#fff;font-size:15px}
+.fila-mas .chev{margin-left:auto;color:var(--sec);font-size:15px}
 </style>
 </head>
 <body>
-<h1>CineCalc</h1>
-<p class="sub">Calculadoras de cinematografía · sin anuncios · funciona sin conexión (PWA)</p>
-<div class="tabs">
-  <button class="tab activa" data-p="fov">Campo de visión</button>
-  <button class="tab" data-p="dof">Profundidad de campo</button>
-  <button class="tab" data-p="exp">Exposición y ND</button>
-  <button class="tab" data-p="tc">Timecode y bitrate</button>
-  <button class="tab" data-p="eq">Equivalencia de objetivo</button>
-</div>
+<header>
+  <h1>CineCalc</h1>
+  <p class="sub">Cinematografía · sin anuncios · sin conexión</p>
+</header>
 
-<section class="panel" id="p-fov">
-  <div class="fila">
-    <label>Focal (mm)<input id="fov-f" type="number" value="35"></label>
-    <label>Formato<select id="fov-s">
-      <option value="36">Full Frame (36×24)</option><option value="24.89">Super 35 (24.89×18.66)</option>
-      <option value="23.5">APS-C (23.5×15.6)</option><option value="17.3">Micro 4/3 (17.3×13)</option>
-      <option value="12.5">1" (12.5×7.3)</option><option value="6.17">1/2.3" (6.17×4.55)</option>
-    </select></label>
-    <label>Distancia (m)<input id="fov-d" type="number" value="5"></label>
-  </div>
-  <button class="calcular" data-cal="fov">Calcular</button>
-  <div class="resultado" id="r-fov"></div>
-</section>
+<main>
+  <section class="panel" id="p-fov">
+    <div>
+      <p class="titulo-sec">Objetivo</p>
+      <div class="tarjeta">
+        <label class="campo"><span>Focal</span><input id="fov-f" type="number" inputmode="decimal" value="35" placeholder="mm"> </label>
+        <label class="campo"><span>Formato</span>
+          <select id="fov-s">
+            <option value="36">Full Frame (36×24)</option><option value="24.89">Super 35</option>
+            <option value="23.5">APS-C</option><option value="17.3">Micro 4/3</option>
+            <option value="12.5">1"</option><option value="6.17">1/2.3"</option>
+          </select>
+        </label>
+        <label class="campo"><span>Distancia</span><input id="fov-d" type="number" inputmode="decimal" value="5" placeholder="m"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="fov">Calcular</button>
+    <div class="resultado" id="r-fov"></div>
+  </section>
 
-<section class="panel oculto" id="p-dof">
-  <div class="fila">
-    <label>Focal (mm)<input id="dof-f" type="number" value="50"></label>
-    <label>Diafragma (T/f)<input id="dof-n" type="number" step="0.1" value="2.8"></label>
-    <label>Distancia (m)<input id="dof-d" type="number" value="3"></label>
-    <label>Círculo de confusión (mm)<input id="dof-c" type="number" step="0.001" value="0.029"></label>
-  </div>
-  <button class="calcular" data-cal="dof">Calcular</button>
-  <div class="resultado" id="r-dof"></div>
-</section>
+  <section class="panel oculto" id="p-dof">
+    <div>
+      <p class="titulo-sec">Profundidad de campo</p>
+      <div class="tarjeta">
+        <label class="campo"><span>Focal</span><input id="dof-f" type="number" inputmode="decimal" value="50"></label>
+        <label class="campo"><span>Diafragma</span><input id="dof-n" type="number" step="0.1" inputmode="decimal" value="2.8"></label>
+        <label class="campo"><span>Distancia</span><input id="dof-d" type="number" inputmode="decimal" value="3"></label>
+        <label class="campo"><span>Círculo confusión</span><input id="dof-c" type="number" step="0.001" inputmode="decimal" value="0.029"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="dof">Calcular</button>
+    <div class="resultado" id="r-dof"></div>
+  </section>
 
-<section class="panel oculto" id="p-exp">
-  <div class="fila">
-    <label>FPS<input id="exp-fps" type="number" value="25"></label>
-    <label>Ángulo de obturación (°)<input id="exp-ang" type="number" value="180"></label>
-    <label>ISO base<input id="exp-iso" type="number" value="800"></label>
-    <label>ND (stops)<input id="exp-nd" type="number" step="0.1" value="0"></label>
-  </div>
-  <button class="calcular" data-cal="exp">Calcular</button>
-  <div class="resultado" id="r-exp"></div>
-</section>
+  <section class="panel oculto" id="p-exp">
+    <div>
+      <p class="titulo-sec">Exposición y ND</p>
+      <div class="tarjeta">
+        <label class="campo"><span>FPS</span><input id="exp-fps" type="number" inputmode="decimal" value="25"></label>
+        <label class="campo"><span>Ángulo obturación</span><input id="exp-ang" type="number" inputmode="decimal" value="180"></label>
+        <label class="campo"><span>ISO base</span><input id="exp-iso" type="number" inputmode="decimal" value="800"></label>
+        <label class="campo"><span>ND (stops)</span><input id="exp-nd" type="number" step="0.1" inputmode="decimal" value="0"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="exp">Calcular</button>
+    <div class="resultado" id="r-exp"></div>
+  </section>
 
-<section class="panel oculto" id="p-tc">
-  <div class="fila">
-    <label>FPS<select id="tc-fps"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>50</option><option>59.94</option></select></label>
-    <label>Timecode inicial<input id="tc-ini" value="01:00:00:00"></label>
-    <label>Duración (segundos)<input id="tc-dur" type="number" value="90"></label>
-    <label>Bitrate (Mbps)<input id="tc-br" type="number" step="0.1" value="100"></label>
-  </div>
-  <button class="calcular" data-cal="tc">Calcular</button>
-  <div class="resultado" id="r-tc"></div>
-</section>
+  <section class="panel oculto" id="p-tc">
+    <div>
+      <p class="titulo-sec">Timecode y bitrate</p>
+      <div class="tarjeta">
+        <label class="campo"><span>FPS</span>
+          <select id="tc-fps"><option>23.976</option><option>24</option><option>25</option><option>29.97</option><option>50</option><option>59.94</option></select>
+        </label>
+        <label class="campo"><span>Timecode inicial</span><input id="tc-ini" value="01:00:00:00"></label>
+        <label class="campo"><span>Duración (s)</span><input id="tc-dur" type="number" inputmode="decimal" value="90"></label>
+        <label class="campo"><span>Bitrate (Mbps)</span><input id="tc-br" type="number" step="0.1" inputmode="decimal" value="100"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="tc">Calcular</button>
+    <div class="resultado" id="r-tc"></div>
+  </section>
 
-<section class="panel oculto" id="p-eq">
-  <div class="fila">
-    <label>Focal en formato A (mm)<input id="eq-f" type="number" value="50"></label>
-    <label>Diagonal A (mm)<input id="eq-a" type="number" step="0.01" value="43.27"></label>
-    <label>Diagonal B (mm)<input id="eq-b" type="number" step="0.01" value="28.12"></label>
-  </div>
-  <button class="calcular" data-cal="eq">Calcular</button>
-  <div class="resultado" id="r-eq"></div>
-</section>
+  <section class="panel oculto" id="p-eq">
+    <div>
+      <p class="titulo-sec">Equivalencia de objetivo</p>
+      <div class="tarjeta">
+        <label class="campo"><span>Focal (A)</span><input id="eq-f" type="number" inputmode="decimal" value="50"></label>
+        <label class="campo"><span>Diagonal A</span><input id="eq-a" type="number" step="0.01" inputmode="decimal" value="43.27"></label>
+        <label class="campo"><span>Diagonal B</span><input id="eq-b" type="number" step="0.01" inputmode="decimal" value="28.12"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="eq">Calcular</button>
+    <div class="resultado" id="r-eq"></div>
+  </section>
 
-<footer>Código propio (MIT) · sin telemetría · sin cuentas</footer>
+  <section class="panel oculto" id="p-frame">
+    <div>
+      <p class="titulo-sec">Encuadre</p>
+      <div class="tarjeta">
+        <label class="campo"><span>Focal</span><input id="fr-f" type="number" inputmode="decimal" value="35"></label>
+        <label class="campo"><span>Formato</span>
+          <select id="fr-s">
+            <option value="36,24">Full Frame 3:2</option><option value="36,20.25">Full Frame 16:9</option>
+            <option value="24.89,18.66">Super 35</option><option value="23.5,15.6">APS-C</option>
+            <option value="17.3,13">Micro 4/3</option>
+          </select>
+        </label>
+        <label class="campo"><span>Distancia</span><input id="fr-d" type="number" inputmode="decimal" value="4"></label>
+        <label class="campo"><span>Relación</span>
+          <select id="fr-ar">
+            <option value="1.7778">16:9</option><option value="2.39">2.39:1</option>
+            <option value="1.85">1.85:1</option><option value="1.3333">4:3</option><option value="1">1:1</option>
+          </select>
+        </label>
+        <label class="campo"><span>Altura referencia</span><input id="fr-h" type="number" step="0.01" inputmode="decimal" value="1.75"></label>
+      </div>
+    </div>
+    <canvas id="lienzo" width="720" height="405"></canvas>
+    <div class="resultado" id="r-frame"></div>
+  </section>
+
+  <section class="panel oculto" id="p-cmp">
+    <div>
+      <p class="titulo-sec">Comparar objetivos</p>
+      <div class="tarjeta">
+        <label class="campo"><span>Formato</span>
+          <select id="cmp-s">
+            <option value="36,24">Full Frame</option><option value="24.89,18.66">Super 35</option>
+            <option value="23.5,15.6">APS-C</option><option value="17.3,13">Micro 4/3</option>
+          </select>
+        </label>
+        <label class="campo"><span>Distancia</span><input id="cmp-d" type="number" inputmode="decimal" value="3"></label>
+        <label class="campo"><span>Diafragma</span><input id="cmp-n" type="number" step="0.1" inputmode="decimal" value="2.8"></label>
+        <label class="campo"><span>Objetivo A</span><input id="cmp-a" type="number" inputmode="decimal" value="24"></label>
+        <label class="campo"><span>Objetivo B</span><input id="cmp-b" type="number" inputmode="decimal" value="50"></label>
+        <label class="campo"><span>Objetivo C</span><input id="cmp-c" type="number" inputmode="decimal" value="85"></label>
+      </div>
+    </div>
+    <button class="calcular" data-cal="cmp">Comparar</button>
+    <div class="resultado" id="r-cmp"></div>
+  </section>
+
+  <section class="panel oculto" id="p-mas">
+    <div>
+      <p class="titulo-sec">Más calculadoras</p>
+      <div class="tarjeta">
+        <div class="fila-mas tab" data-p="eq"><span class="ico">↔</span>Equivalencia de objetivo<span class="chev">›</span></div>
+        <div class="fila-mas tab" data-p="frame"><span class="ico">▣</span>Encuadre<span class="chev">›</span></div>
+        <div class="fila-mas tab" data-p="cmp"><span class="ico">≡</span>Comparar objetivos<span class="chev">›</span></div>
+      </div>
+    </div>
+    <div>
+      <p class="titulo-sec">Acerca de</p>
+      <div class="tarjeta">
+        <div class="fila-mas"><span class="ico" style="background:var(--verde)">★</span>CineCalc 1.1<span class="chev">MIT</span></div>
+        <div class="fila-mas"><span class="ico" style="background:var(--sec)">ⓘ</span>Sin anuncios ni cuentas<span class="chev">offline</span></div>
+      </div>
+    </div>
+    <footer>Código propio (MIT) · sin telemetría</footer>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button class="tab activa" data-p="fov"><span class="ico">👁</span>Visión</button>
+  <button class="tab" data-p="dof"><span class="ico">◎</span>DoF</button>
+  <button class="tab" data-p="exp"><span class="ico">☀</span>Exposición</button>
+  <button class="tab" data-p="tc"><span class="ico">⏱</span>Timecode</button>
+  <button class="tab" data-p="mas"><span class="ico">•••</span>Más</button>
+</nav>
+
 <script src="app.js"></script>
 </body>
 </html>

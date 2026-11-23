@@ -9,8 +9,14 @@ Calculadoras de cinematografía en una **PWA**: funciona en Android (instalable 
 - **Exposición y ND**: velocidad de obturación por ángulo, equivalencia con filtros ND.
 - **Timecode y bitrate**: timecode final, duración y tamaño estimado del archivo.
 - **Equivalencia de objetivo**: factor de recorte y focal equivalente entre formatos.
+- **Encuadre**: previsualización del cuadro con rejilla de tercios, relación de aspecto y figura de referencia a escala.
+- **Comparar objetivos**: 3 focales a la vez (ángulo, ancho encuadrado y profundidad de campo).
 
-![CineCalc](docs/captura.png)
+Interfaz estilo app de iPhone (iOS), con modo claro y oscuro automático:
+
+| Claro | Oscuro |
+|---|---|
+| ![claro](docs/ios-claro.png) | ![oscuro](docs/ios-oscuro.png) |
 
 ## Uso
 
